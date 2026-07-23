@@ -14,7 +14,11 @@
 /.zed
 /auth.json
 /node_modules
+<<<<<<< HEAD
 /public/build
+=======
+/supportticketsystem
+>>>>>>> 154d31ca294924f35dec9b4630157f983f7a3aaa
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
