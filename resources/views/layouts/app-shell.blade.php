@@ -19,7 +19,9 @@
     $appearanceLogoUrl = null;
 
     try {
-        if (
+        if (! empty($appearanceSettings->logo_data)) {
+            $appearanceLogoUrl = $appearanceSettings->logo_data;
+        } elseif (
             ! empty($appearanceSettings->logo_path)
             && \Illuminate\Support\Facades\Storage::disk('public')->exists($appearanceSettings->logo_path)
         ) {

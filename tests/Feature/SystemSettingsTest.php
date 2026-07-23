@@ -132,7 +132,6 @@ class SystemSettingsTest extends TestCase
 
     public function test_authenticated_user_can_upload_system_logo(): void
     {
-        Storage::fake('public');
         $this->seed();
 
         $this->actingAs(User::where('email', 'admin@xceler8.test')->firstOrFail());
@@ -162,22 +161,21 @@ class SystemSettingsTest extends TestCase
 
         $settings = SystemSetting::firstOrFail();
 
-        $this->assertNotNull($settings->logo_path);
-        $this->assertStringStartsWith('system-logos/', $settings->logo_path);
-        Storage::disk('public')->assertExists($settings->logo_path);
+        $this->assertNull($settings->logo_path);
+        $this->assertNotNull($settings->logo_data);
+        $this->assertStringStartsWith('data:image/svg+xml;base64,', $settings->logo_data);
 
         $this->assertDatabaseHas('system_settings', [
             'id' => $settings->id,
-            'logo_path' => $settings->logo_path,
+            'logo_path' => null,
+            'logo_data' => $settings->logo_data,
         ]);
-
-        $logoUrl = '/storage/'.$settings->logo_path;
 
         $this->get(route('system-settings'))
             ->assertStatus(200)
             ->assertSee('aria-label="System logo preview"', false)
             ->assertSee('id="logo-preview-image"', false)
-            ->assertSee('src="'.$logoUrl.'"', false)
+            ->assertSee('src="'.$settings->logo_data.'"', false)
             ->assertDontSee('alt="System logo preview"', false);
     }
 

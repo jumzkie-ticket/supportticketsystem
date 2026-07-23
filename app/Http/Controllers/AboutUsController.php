@@ -14,9 +14,11 @@ class AboutUsController extends Controller
     {
         $settings = SystemSetting::current();
         $releaseDate = CarbonImmutable::parse((string) config('app.first_release_date', '2026-07-07'));
-        $logoUrl = $settings->logo_path && Storage::disk('public')->exists($settings->logo_path)
-            ? '/storage/'.ltrim($settings->logo_path, '/')
-            : null;
+        $logoUrl = $settings->logo_data;
+
+        if (! $logoUrl && $settings->logo_path && Storage::disk('public')->exists($settings->logo_path)) {
+            $logoUrl = '/storage/'.ltrim($settings->logo_path, '/');
+        }
 
         $versionInfo = [
             'version' => SystemVersion::current(),

@@ -727,9 +727,11 @@
 
 @section('content')
     @php
-        $logoUrl = $settings->logo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($settings->logo_path)
-            ? '/storage/'.ltrim($settings->logo_path, '/')
-            : null;
+        $logoUrl = $settings->logo_data;
+
+        if (! $logoUrl && $settings->logo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($settings->logo_path)) {
+            $logoUrl = '/storage/'.ltrim($settings->logo_path, '/');
+        }
         $currentPrimaryColor = strtoupper((string) old('primary_color', $settings->primary_color));
         $pickerPrimaryColor = preg_match('/^#[0-9A-Fa-f]{6}$/', $currentPrimaryColor) ? $currentPrimaryColor : '#2563EB';
         $colorPalette = [

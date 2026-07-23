@@ -6,7 +6,6 @@ use App\Models\SystemSetting;
 use App\Support\SystemVersion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -65,11 +64,13 @@ class SystemSettingsController extends Controller
         $data['primary_color'] = strtoupper($data['primary_color']);
 
         if ($request->hasFile('logo')) {
-            if ($settings->logo_path) {
-                Storage::disk('public')->delete($settings->logo_path);
-            }
-
-            $data['logo_path'] = $request->file('logo')->store('system-logos', 'public');
+            $logo = $request->file('logo');
+            $data['logo_data'] = sprintf(
+                'data:%s;base64,%s',
+                $logo->getMimeType() ?: 'application/octet-stream',
+                base64_encode($logo->getContent()),
+            );
+            $data['logo_path'] = null;
         }
 
         unset($data['logo']);
