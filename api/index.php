@@ -9,7 +9,7 @@ define('LARAVEL_START', microtime(true));
 $root = dirname(__DIR__);
 $tmp = '/tmp/laravel';
 
-foreach (['views', 'sessions', 'cache'] as $directory) {
+foreach (['views', 'sessions', 'cache', 'cache/data', 'app'] as $directory) {
     $path = $tmp.'/'.$directory;
 
     if (! is_dir($path)) {
@@ -25,16 +25,17 @@ $serverlessEnvironment = [
     'APP_SERVICES_CACHE' => $tmp.'/services.php',
     'VIEW_COMPILED_PATH' => $tmp.'/views',
     'LOG_CHANNEL' => 'stderr',
+    'LOG_STACK' => 'stderr',
     'CACHE_STORE' => 'array',
     'SESSION_DRIVER' => 'cookie',
+    'APP_VERSION_STATE_PATH' => $tmp.'/app/system-version.json',
+    'APP_VERSION_AUTO_INCREMENT' => 'false',
 ];
 
 foreach ($serverlessEnvironment as $key => $value) {
-    if (getenv($key) === false) {
-        putenv("{$key}={$value}");
-        $_ENV[$key] = $value;
-        $_SERVER[$key] = $value;
-    }
+    putenv("{$key}={$value}");
+    $_ENV[$key] = $value;
+    $_SERVER[$key] = $value;
 }
 
 if (file_exists($maintenance = $root.'/storage/framework/maintenance.php')) {
