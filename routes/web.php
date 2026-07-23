@@ -32,6 +32,10 @@ Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('l
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
 Route::get('/register', [ClientUserRegistrationController::class, 'create'])->name('register');
 Route::post('/register', [ClientUserRegistrationController::class, 'store'])->name('register.store');
+Route::get('/logout', fn () => auth()->check()
+    ? redirect()->route('dashboard')
+    : redirect()->route('login')
+);
 
 Route::middleware('auth')->group(function (): void {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
